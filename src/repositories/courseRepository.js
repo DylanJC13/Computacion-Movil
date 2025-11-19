@@ -1,3 +1,4 @@
+const { v4: uuid } = require('uuid');
 const { getPool, useDatabase } = require('../db/pool');
 const seedCourses = require('../data/courses');
 
@@ -140,9 +141,48 @@ async function findCourseById(courseId) {
   return mapRow(rows[0]);
 }
 
+async function createCourse(data) {
+  await ensureTable();
+  const pool = getPool();
+  const course = {
+    id: data.id || `c-${uuid().slice(0, 8)}`,
+    title: data.title,
+    instructor: data.instructor,
+    credits: data.credits,
+    modality: data.modality,
+    schedule: data.schedule,
+    campus: data.campus,
+    startDate: normalizeDate(data.startDate),
+    tags: data.tags || [],
+    summary: data.summary
+  };
+
+  await pool.query(
+    `
+      INSERT INTO courses (id, title, instructor, credits, modality, schedule, campus, start_date, tags, summary)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    `,
+    [
+      course.id,
+      course.title,
+      course.instructor,
+      course.credits,
+      course.modality,
+      course.schedule,
+      course.campus,
+      course.startDate,
+      course.tags,
+      course.summary
+    ]
+  );
+
+  return mapRow(course);
+}
+
 module.exports = {
   useDatabase,
   ensureTable,
   listCourses,
-  findCourseById
+  findCourseById,
+  createCourse
 };

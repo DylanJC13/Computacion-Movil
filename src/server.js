@@ -10,7 +10,6 @@ const notFound = require('./middleware/notFound');
 const errorHandler = require('./middleware/errorHandler');
 const courseRoutes = require('./routes/courseRoutes');
 const announcementRoutes = require('./routes/announcementRoutes');
-const supportRoutes = require('./routes/supportRoutes');
 const healthRoutes = require('./routes/healthRoutes');
 
 const app = express();
@@ -24,7 +23,6 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api/health', healthRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/announcements', announcementRoutes);
-app.use('/api/requests', supportRoutes);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));

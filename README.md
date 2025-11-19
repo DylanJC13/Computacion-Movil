@@ -28,14 +28,13 @@ La API queda disponible en `http://localhost:4000/api` y la PWA se sirve desde l
 | GET | `/api/health` | Diagnóstico rápido del servicio. |
 | GET | `/api/courses` | Lista cursos. Permite filtrar por `modality`, `campus`, `tag` o `search`. |
 | GET | `/api/courses/:courseId` | Devuelve un curso puntual. |
+| POST | `/api/courses` | Crea un curso y lo persiste en la base de datos. |
 | GET | `/api/announcements` | Avisos recientes. Acepta `level` y `limit`. |
-| GET | `/api/requests` | Tickets enviados durante la ejecución (memoria). |
-| POST | `/api/requests` | Crea un ticket. Valida payload con Zod. |
 
 ## Base de datos
 
 - Define en `.env` las variables `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` y `DB_SSLMODE` para habilitar la persistencia en PostgreSQL.
-- La API crea automáticamente las tablas `support_tickets` y `courses`, pero si deseas hacerlo de forma manual:
+- La API crea automáticamente la tabla `courses`, pero si deseas hacerlo de forma manual:
 
 ```sql
 CREATE TABLE IF NOT EXISTS courses (
@@ -51,23 +50,15 @@ CREATE TABLE IF NOT EXISTS courses (
   summary TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS support_tickets (
-  id UUID PRIMARY KEY,
-  full_name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  topic TEXT NOT NULL,
-  message TEXT NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
 ```
 
-- Cuando las variables no están definidas, los módulos vuelven al almacenamiento en memoria, por lo que `/api/requests` y `/api/courses` utilizan los datos locales.
+- Cuando las variables no están definidas, el catálogo de `/api/courses` se sirve desde los datos locales en memoria.
 
 ## PWA
 
 - Manifest básico en `public/manifest.json`.
 - Service Worker (`public/service-worker.js`) cachea el shell y entrega respuesta offline controlada para las rutas del API.
-- El archivo `public/app.js` maneja filtros, consumo de la API y el flujo de instalación.
+- El archivo `public/app.js` maneja filtros, consumo de la API, registro de cursos y el flujo de instalación.
 
 ## Probar en un celular en la misma red
 
@@ -78,6 +69,6 @@ CREATE TABLE IF NOT EXISTS support_tickets (
 
 ## Siguientes pasos sugeridos
 
-1. Persistir los tickets en una base de datos real (Mongo/PostgreSQL) con autenticación JWT.
+1. Añadir autenticación/autorización antes de permitir la creación de cursos en producción.
 2. Desplegar el servicio en Render, Railway u otro proveedor y actualizar `ALLOWED_ORIGINS`.
 3. Añadir pruebas automatizadas para las rutas críticas (`node --test` o Jest/Supertest).

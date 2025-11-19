@@ -62,33 +62,53 @@
         <div id="announcementsList" class="list announcements"></div>
       </section>
 
-      <section class="card" id="supportSection">
-        <p class="eyebrow">¿Dudas?</p>
-        <h2>Levanta un ticket</h2>
-        <form id="ticketForm" class="stack">
+      <section class="card" id="createCourseSection">
+        <p class="eyebrow">Nuevo curso</p>
+        <h2>Registrar oferta</h2>
+        <form id="courseForm" class="stack">
           <label>
-            Nombre completo
-            <input type="text" name="fullName" required minlength="3" />
+            Título
+            <input type="text" name="title" required minlength="4" />
           </label>
           <label>
-            Correo institucional
-            <input type="email" name="email" required />
+            Docente
+            <input type="text" name="instructor" required minlength="3" />
           </label>
           <label>
-            Tema
-            <select name="topic" required>
-              <option value="backend">Backend</option>
-              <option value="pwa" selected>PWA</option>
-              <option value="evaluación">Evaluación</option>
-              <option value="otro">Otro</option>
+            Créditos
+            <input type="number" name="credits" min="1" max="10" required />
+          </label>
+          <label>
+            Modalidad
+            <select name="modality" required>
+              <option value="Presencial">Presencial</option>
+              <option value="Virtual">Virtual</option>
+              <option value="Híbrido">Híbrido</option>
+              <option value="Remoto">Remoto</option>
             </select>
           </label>
           <label>
-            Mensaje
-            <textarea name="message" rows="3" minlength="10" maxlength="280" required></textarea>
+            Horario
+            <input type="text" name="schedule" placeholder="Lunes 8-10 AM" required />
           </label>
-          <button type="submit">Enviar ticket</button>
-          <p id="ticketStatus" role="status"></p>
+          <label>
+            Campus
+            <input type="text" name="campus" placeholder="Neiva" required />
+          </label>
+          <label>
+            Fecha de inicio
+            <input type="date" name="startDate" required />
+          </label>
+          <label>
+            Tags (separados por coma)
+            <input type="text" name="tags" placeholder="android,pwa" />
+          </label>
+          <label>
+            Resumen
+            <textarea name="summary" rows="3" minlength="10" maxlength="280" required></textarea>
+          </label>
+          <button type="submit">Guardar curso</button>
+          <p id="courseStatus" role="status"></p>
         </form>
       </section>
     </main>

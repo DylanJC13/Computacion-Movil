@@ -88,24 +88,42 @@ async function handleFilters(event) {
   renderCourses(courses);
 }
 
-async function handleTicket(event) {
+async function handleCourseForm(event) {
   event.preventDefault();
   const formData = new FormData(event.currentTarget);
-  const payload = Object.fromEntries(formData.entries());
-  const statusEl = document.querySelector('#ticketStatus');
-  statusEl.textContent = 'Enviando…';
+  const tagsValue = formData.get('tags') || '';
+  const payload = {
+    title: formData.get('title'),
+    instructor: formData.get('instructor'),
+    credits: formData.get('credits'),
+    modality: formData.get('modality'),
+    schedule: formData.get('schedule'),
+    campus: formData.get('campus'),
+    startDate: formData.get('startDate'),
+    summary: formData.get('summary'),
+    tags: tagsValue
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter(Boolean)
+  };
+
+  const statusEl = document.querySelector('#courseStatus');
+  statusEl.textContent = 'Guardando…';
   statusEl.className = '';
 
   try {
-    const response = await fetchJSON('/requests', {
+    await fetchJSON('/courses', {
       method: 'POST',
       body: JSON.stringify(payload)
     });
-    statusEl.textContent = `Ticket #${response.data.id.slice(0, 6)} recibido. ¡Gracias!`;
+    statusEl.textContent = 'Curso registrado correctamente.';
     statusEl.classList.add('ok');
     event.currentTarget.reset();
+    const courses = await loadCourses();
+    renderCourses(courses);
   } catch (error) {
-    statusEl.textContent = 'No pudimos registrar el ticket.';
+    console.error(error);
+    statusEl.textContent = 'No pudimos registrar el curso.';
     statusEl.classList.add('error');
   }
 }
@@ -144,7 +162,7 @@ function setupInstallPrompt() {
 window.addEventListener('DOMContentLoaded', () => {
   bootstrap();
   document.getElementById('filtersForm').addEventListener('submit', handleFilters);
-  document.getElementById('ticketForm').addEventListener('submit', handleTicket);
+  document.getElementById('courseForm').addEventListener('submit', handleCourseForm);
   registerServiceWorker();
   setupInstallPrompt();
 });
