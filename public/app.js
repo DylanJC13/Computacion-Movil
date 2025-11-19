@@ -1,4 +1,9 @@
-const API_BASE = `${window.location.origin}/api`;
+const RENDER_API = 'https://computacion-movil.onrender.com/api';
+const API_BASE =
+  window.location.origin.includes('computacion-movil.pages.dev') ||
+  window.location.origin.includes('onrender.com')
+    ? RENDER_API
+    : `${window.location.origin}/api`;
 
 async function fetchJSON(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
