@@ -35,9 +35,22 @@ La API queda disponible en `http://localhost:4000/api` y la PWA se sirve desde l
 ## Base de datos
 
 - Define en `.env` las variables `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` y `DB_SSLMODE` para habilitar la persistencia en PostgreSQL.
-- La API crea automáticamente la tabla `support_tickets`, pero si deseas hacerlo manualmente:
+- La API crea automáticamente las tablas `support_tickets` y `courses`, pero si deseas hacerlo de forma manual:
 
 ```sql
+CREATE TABLE IF NOT EXISTS courses (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  instructor TEXT NOT NULL,
+  credits INT NOT NULL,
+  modality TEXT NOT NULL,
+  schedule TEXT NOT NULL,
+  campus TEXT NOT NULL,
+  start_date DATE NOT NULL,
+  tags TEXT[] NOT NULL,
+  summary TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS support_tickets (
   id UUID PRIMARY KEY,
   full_name TEXT NOT NULL,
@@ -48,7 +61,7 @@ CREATE TABLE IF NOT EXISTS support_tickets (
 );
 ```
 
-- Cuando las variables no están definidas, la ruta `/api/requests` vuelve al almacenamiento en memoria.
+- Cuando las variables no están definidas, los módulos vuelven al almacenamiento en memoria, por lo que `/api/requests` y `/api/courses` utilizan los datos locales.
 
 ## PWA
 

@@ -1,14 +1,13 @@
 const { Router } = require('express');
-const courses = require('../data/courses');
+const memoryCourses = require('../data/courses');
+const courseRepository = require('../repositories/courseRepository');
 
 const router = Router();
 
 const normalize = (value = '') => value.toString().toLowerCase();
 
-router.get('/', (req, res) => {
-  const { modality, campus, tag, search } = req.query;
-
-  const filtered = courses.filter((course) => {
+function filterCourses(items, { modality, campus, tag, search }) {
+  return items.filter((course) => {
     const matchesModality = modality ? normalize(course.modality) === normalize(modality) : true;
     const matchesCampus = campus ? normalize(course.campus) === normalize(campus) : true;
     const matchesTag = tag ? course.tags.map(normalize).includes(normalize(tag)) : true;
@@ -18,24 +17,41 @@ router.get('/', (req, res) => {
 
     return matchesModality && matchesCampus && matchesTag && matchesSearch;
   });
+}
 
-  res.json({
-    status: 'ok',
-    total: filtered.length,
-    data: filtered
-  });
+router.get('/', async (req, res, next) => {
+  try {
+    const sourceCourses = courseRepository.useDatabase
+      ? await courseRepository.listCourses()
+      : memoryCourses;
+    const filtered = filterCourses(sourceCourses, req.query);
+
+    res.json({
+      status: 'ok',
+      total: filtered.length,
+      data: filtered
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.get('/:courseId', (req, res, next) => {
-  const course = courses.find((item) => item.id === req.params.courseId);
+router.get('/:courseId', async (req, res, next) => {
+  try {
+    const course = courseRepository.useDatabase
+      ? await courseRepository.findCourseById(req.params.courseId)
+      : memoryCourses.find((item) => item.id === req.params.courseId);
 
-  if (!course) {
-    const error = new Error('Curso no encontrado');
-    error.status = 404;
-    return next(error);
+    if (!course) {
+      const err = new Error('Curso no encontrado');
+      err.status = 404;
+      throw err;
+    }
+
+    res.json({ status: 'ok', data: course });
+  } catch (error) {
+    next(error);
   }
-
-  res.json({ status: 'ok', data: course });
 });
 
 module.exports = router;
