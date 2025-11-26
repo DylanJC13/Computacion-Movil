@@ -33,7 +33,7 @@ La API queda disponible en `http://localhost:4000/api` y la PWA se sirve desde l
 
 ## Base de datos
 
-- Define en `.env` las variables `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` y `DB_SSLMODE` para habilitar la persistencia en PostgreSQL.
+- Define en `.env` las variables `DB_HOST`, `DB_PORT`, `DB_NAME` (o `DB_DATABASE`), `DB_USER`, `DB_PASSWORD` y `DB_SSLMODE` (o `DB_SSL=true`) para habilitar la persistencia en PostgreSQL.
 - La API crea automáticamente la tabla `courses`, pero si deseas hacerlo de forma manual:
 
 ```sql

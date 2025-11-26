@@ -1,6 +1,9 @@
-const API_BASE = window.location.origin.includes('ondigitalocean.app')
+const origin = window.location.origin;
+const API_BASE = origin.includes('ondigitalocean.app')
   ? 'https://whale-app-ptl77.ondigitalocean.app/api'
-  : `${window.location.origin}/api`;
+  : origin.includes('localhost:4000') || origin.includes('127.0.0.1:4000')
+    ? `${origin}/api`
+    : 'http://localhost:4000/api'; // fallback para Live Server u otros puertos
 
 async function fetchJSON(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
@@ -128,7 +131,7 @@ async function handleCourseForm(event) {
 async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
-      await navigator.serviceWorker.register('/service-worker.js');
+      await navigator.serviceWorker.register('./service-worker.js');
     } catch (error) {
       console.warn('SW', error);
     }
